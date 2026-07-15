@@ -59,33 +59,44 @@ app.post('/start-raid', (req, res) => {
             const client = new Kahoot();
             const botName = `${baseName}_${i}`;
             
-            // Konfiguration für Custom-Skins definieren
+            // Kahoot benötigt ein exaktes "avatar"-Objekt mit spezifischen IDs für Kopf, Körper und Accessoires
             let avatarData = undefined;
             if (avatarMode === 'custom') {
-                avatarData = {};
+                avatarData = {
+                    avatar: {
+                        type: "user", // Sagt Kahoot, dass es ein ausgewählter Charakter ist
+                        // Die IDs müssen exakt zu Kahoots Asset-Datenbank passen:
+                        head: 1, 
+                        body: 1,
+                        accessory: 0,
+                        color: "green"
+                    }
+                };
+
+                // Zuweisung der exakten Kahoot-Asset-IDs für deine Themes
                 if (avatarTheme === 'robots') {
-                    // IDs für Roboter-Teile in Kahoot
-                    avatarData.head = 3; 
-                    avatarData.body = 3;
-                    avatarData.accessory = Math.floor(Math.random() * 5) + 1;
+                    avatarData.avatar.head = 13; // Roboter-Kopf-ID
+                    avatarData.avatar.body = 13; // Roboter-Körper-ID
+                    avatarData.avatar.accessory = 4; // z.B. Antenne
                 } else if (avatarTheme === 'monsters') {
-                    avatarData.head = 5;
-                    avatarData.body = 5;
-                    avatarData.accessory = Math.floor(Math.random() * 3) + 1;
+                    avatarData.avatar.head = 8; // Alien/Monster-Kopf-ID
+                    avatarData.avatar.body = 8;
+                    avatarData.avatar.accessory = 3; 
                 } else if (avatarTheme === 'astronauts') {
-                    avatarData.head = 1; // Astro-Helm
-                    avatarData.body = 1;
-                    avatarData.accessory = 2;
-                } else { // party
-                    avatarData.head = Math.floor(Math.random() * 10) + 1;
-                    avatarData.body = Math.floor(Math.random() * 10) + 1;
-                    avatarData.accessory = 4; // z.B. Brille / Partyhut
+                    avatarData.avatar.head = 5; // Astronauten-Helm
+                    avatarData.avatar.body = 5;
+                    avatarData.avatar.accessory = 1;
+                } else if (avatarTheme === 'party') {
+                    avatarData.avatar.head = 10; // Party-Kopf (z.B. Katze mit Brille)
+                    avatarData.avatar.body = 10;
+                    avatarData.avatar.accessory = 9; // Party-Hut
                 }
             }
 
-            // Kahoot erlaubt die Übergabe von Avatar-Metadaten als dritten Parameter in der join-Methode!
-            // Format: client.join(pin, name, [avatar_team_or_metadata])
-            client.join(pin, botName, avatarData).then(() => {
+            // WICHTIG: Die Library erwartet die Avatar-Metadaten verpackt in einem "options"-Objekt!
+            const joinOptions = avatarData ? avatarData : {};
+
+            client.join(pin, botName, joinOptions).then(() => {
                 console.log(`[${botName}] SUCCESS: In lobby`);
                 const skinMsg = avatarMode === 'custom' ? ` mit Style [${avatarTheme}]` : '';
                 broadcastLog(`Bot ${botName} beigetreten${skinMsg}.`, 'info');
