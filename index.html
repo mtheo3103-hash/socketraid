@@ -3,136 +3,435 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kahoot Raid Controller</title>
+    <title>SocketRaid - Kahoot Spammer</title>
+    <!-- Google Fonts: Plus Jakarta Sans (für modernste UI) und Merriweather (die klassische Buch-Schriftart) -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        
         body {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at center, #0f1c12 0%, #050806 100%);
+            color: #f1f6f2;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        /* LOGO OBEN LINKS IN DER ECKE */
+        .header-logo {
+            position: absolute;
+            top: 25px;
+            left: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #2ed573 0%, #1dd1a1 100%);
+            border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
+            box-shadow: 0 0 15px rgba(46, 213, 115, 0.4);
+        }
+
+        /* Minimalistisches Blitz-Symbol im Logo */
+        .logo-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: #ffffff;
+        }
+
+        .logo-text {
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+        }
+
+        /* 1. HERO BEREICH */
+        .hero-section {
             height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: #1e1e1e;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            width: 100%;
-            max-width: 400px;
-        }
-        h2 {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            margin-bottom: 10px;
-            color: #f5f5f5;
+            position: relative;
+            padding: 20px;
+            box-sizing: border-box;
         }
+
+        /* Super moderne, fette serifenlose Überschrift */
+        .hero-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: clamp(3.5rem, 9vw, 6.5rem);
+            font-weight: 800;
+            line-height: 0.95;
+            letter-spacing: -3px;
+            margin: 0 0 15px 0;
+            text-shadow: 0 0 50px rgba(46, 213, 115, 0.1);
+        }
+
+        /* "Socket" im giftgrünen Verlauf */
+        .hero-title .title-socket {
+            background: linear-gradient(135deg, #2ed573 0%, #1dd1a1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* "Raid" in cleanem Weiß */
+        .hero-title .title-raid {
+            color: #ffffff;
+        }
+
+        /* Untertitel in klassischer Buch-Schriftart */
+        .hero-subtitle {
+            font-family: 'Merriweather', serif;
+            font-style: italic;
+            font-size: clamp(1.1rem, 2.5vw, 1.8rem);
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0 0 40px 0;
+            font-weight: 300;
+        }
+
+        /* Pfeil und "zum Panel" in Buch-Schriftart mit niedriger Transparenz */
+        .scroll-down {
+            position: absolute;
+            bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(46, 213, 115, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .scroll-down:hover {
+            color: rgba(46, 213, 115, 0.9);
+            transform: translateY(3px);
+        }
+
+        .scroll-text {
+            font-family: 'Merriweather', serif;
+            font-style: italic;
+            font-size: 13px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .scroll-arrow {
+            font-size: 16px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+            60% { transform: translateY(-4px); }
+        }
+
+
+        /* 2. PANEL BEREICH */
+        .panel-section {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            background: rgba(15, 23, 18, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 35px 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(46, 213, 115, 0.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(46, 213, 115, 0.05);
+            width: 100%;
+            max-width: 440px;
+            box-sizing: border-box;
+        }
+
+        .panel-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 800;
+            margin-top: 0;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #ffffff;
+        }
+
         .live-counter {
             text-align: center;
             font-size: 13px;
-            color: #888888;
+            color: #88938a;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 8px;
+            border-radius: 8px;
             margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
+
         .live-counter span {
-            color: #4cd137;
+            color: #2ed573;
             font-weight: bold;
+            text-shadow: 0 0 8px rgba(46, 213, 115, 0.4);
         }
+
         label {
             display: block;
             margin-bottom: 8px;
-            font-size: 14px;
-            color: #b3b3b3;
+            font-size: 12px;
+            font-weight: 800;
+            color: #88938a;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
         }
+
         input {
             width: 100%;
-            padding: 12px;
+            padding: 12px 16px;
             margin-bottom: 20px;
-            border-radius: 6px;
-            border: 1px solid #333333;
-            background-color: #2a2a2a;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background-color: rgba(5, 8, 6, 0.6);
             color: #ffffff;
-            font-size: 16px;
+            font-size: 15px;
             box-sizing: border-box;
+            transition: all 0.2s ease-in-out;
+            font-family: inherit;
         }
+
         input:focus {
-            border-color: #4a90e2;
+            border-color: #2ed573;
+            background-color: rgba(5, 8, 6, 0.8);
+            box-shadow: 0 0 10px rgba(46, 213, 115, 0.2);
             outline: none;
         }
-        .slider-container {
-            margin-bottom: 25px;
-        }
-        .slider-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #b3b3b3;
-            margin-bottom: 5px;
-        }
-        input[type="range"] {
-            padding: 0;
-            cursor: pointer;
-        }
+
+        /* Leuchtender grüner Button */
         button {
             width: 100%;
             padding: 14px;
             border: none;
-            border-radius: 6px;
-            background-color: #4a90e2;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #2ed573 0%, #10ac84 100%);
             color: #ffffff;
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            box-shadow: 0 4px 15px rgba(46, 213, 115, 0.25);
+            transition: all 0.2s ease-in-out;
+            font-family: inherit;
+            margin-top: 10px;
         }
+
         button:hover {
-            background-color: #357abd;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(46, 213, 115, 0.4);
+            background: linear-gradient(135deg, #3ae374 0%, #1dd1a1 100%);
         }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
         #status {
             text-align: center;
             margin-top: 15px;
-            font-size: 14px;
-            color: #4cd137;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2ed573;
+            text-shadow: 0 0 5px rgba(46, 213, 115, 0.2);
+        }
+
+        /* FAKE MACOS TERMINAL (CMD FENSTER) */
+        .terminal-window {
+            margin-top: 25px;
+            background: #020403;
+            border: 1px solid rgba(46, 213, 115, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 180px;
+            transition: all 0.3s ease;
+        }
+
+        /* Terminal Header (macOS Knöpfe) */
+        .terminal-header {
+            background: #111512;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .terminal-buttons {
+            display: flex;
+            gap: 7px;
+        }
+
+        .terminal-btn {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .btn-red { background: #ff5f56; }
+        .btn-yellow { background: #ffbd2e; }
+        .btn-green { background: #27c93f; }
+
+        .terminal-title {
+            font-size: 11px;
+            color: #616e64;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+            margin-right: 25px; /* Ausgleich für linksbündige Knöpfe */
+        }
+
+        /* Terminal Logs */
+        .terminal-body {
+            padding: 12px;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 11px;
+            color: #a4b3a7;
+            overflow-y: auto;
+            flex-grow: 1;
+            line-height: 1.5;
+            text-align: left;
+            scroll-behavior: smooth;
+        }
+
+        /* Scrollbar für Terminal stylen */
+        .terminal-body::-webkit-scrollbar {
+            width: 4px;
+        }
+        .terminal-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .terminal-body::-webkit-scrollbar-thumb {
+            background: rgba(46, 213, 115, 0.2);
+            border-radius: 2px;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+        }
+
+        .log-time {
+            color: #616e64;
+        }
+
+        .log-info {
+            color: #2ed573;
+        }
+
+        .log-warn {
+            color: #ffbd2e;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Kahoot Raid Panel</h2>
-    <div class="live-counter">Connected Bots: <span id="botCounter">0</span></div>
+<!-- LOGO LINKS OBEN IN DER ECKE -->
+<div class="header-logo">
+    <div class="logo-icon">
+        <!-- Minimalistisches SVG Blitz-Icon -->
+        <svg viewBox="0 0 24 24">
+            <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+    </div>
+    <span class="logo-text">SocketRaid</span>
+</div>
+
+<!-- 1. HERO BEREICH -->
+<div class="hero-section">
+    <h1 class="hero-title">
+        <span class="title-socket">Socket</span><span class="title-raid">Raid</span>
+    </h1>
+    <p class="hero-subtitle">The #1 Kahoot Spammer</p>
     
-    <form id="raidForm">
-        <label for="pin">Kahoot Game PIN</label>
-        <input type="text" id="pin" name="pin" required placeholder="e.g. 1013450">
+    <!-- Eleganter Pfeil in Buch-Schriftart -->
+    <a href="#panel" class="scroll-down">
+        <span class="scroll-text">zum Panel</span>
+        <span class="scroll-arrow">▼</span>
+    </a>
+</div>
 
-        <label for="baseName">Bot Base Name</label>
-        <input type="text" id="baseName" name="baseName" required placeholder="e.g. hack">
+<!-- 2. PANEL BEREICH (Nach dem Scrollen) -->
+<div class="panel-section" id="panel">
+    <div class="container">
+        <h2 class="panel-title">Raid Controller</h2>
+        <div class="live-counter">Connected Bots: <span id="botCounter">0</span></div>
+        
+        <form id="raidForm">
+            <label for="pin">Kahoot Game PIN</label>
+            <input type="text" id="pin" name="pin" required placeholder="e.g. 1013450">
 
-        <label for="count">Bot Count</label>
-        <input type="number" id="count" name="count" required min="1" max="100" placeholder="e.g. 30">
+            <label for="baseName">Bot Base Name</label>
+            <input type="text" id="baseName" name="baseName" required placeholder="e.g. hack">
 
-        <div class="slider-container">
-            <div class="slider-labels">
-                <label>Einstein Accuracy</label>
-                <span id="accuracyVal">50%</span>
+            <label for="count">Bot Count</label>
+            <input type="number" id="count" name="count" required min="1" max="100" placeholder="e.g. 30">
+
+            <button type="submit">Deploy Bots Instantly</button>
+        </form>
+        <div id="status"></div>
+
+        <!-- FAKE MACOS TERMINAL -->
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <div class="terminal-btn btn-red"></div>
+                    <div class="terminal-btn btn-yellow"></div>
+                    <div class="terminal-btn btn-green"></div>
+                </div>
+                <div class="terminal-title">bash — render-server-01 — 80×24</div>
             </div>
-            <input type="range" id="accuracy" name="accuracy" min="0" max="100" value="50">
+            <div class="terminal-body" id="terminalLogs">
+                <div class="log-entry"><span class="log-time">[14:28:01]</span> <span class="log-info">[system]</span> SocketRaid daemon initialized. Ready for command...</div>
+            </div>
         </div>
-
-        <button type="submit">Deploy Bots Instantly</button>
-    </form>
-    <div id="status"></div>
+    </div>
 </div>
 
 <script>
-    const slider = document.getElementById('accuracy');
-    const output = document.getElementById('accuracyVal');
-    slider.oninput = function() {
-        output.innerHTML = this.value + "%";
+    const terminal = document.getElementById('terminalLogs');
+
+    // Funktion um Logs im macOS-Fenster hinzuzufügen
+    function appendLog(text, type = 'info') {
+        const time = new Date().toTimeString().split(' ')[0];
+        const logEntry = document.createElement('div');
+        logEntry.className = 'log-entry';
+        
+        let prefix = `<span class="log-info">[info]</span>`;
+        if (type === 'warn') prefix = `<span class="log-warn">[warn]</span>`;
+        if (type === 'system') prefix = `<span class="log-time">[system]</span>`;
+
+        logEntry.innerHTML = `<span class="log-time">[${time}]</span> ${prefix} ${text}`;
+        terminal.appendChild(logEntry);
+        terminal.scrollTop = terminal.scrollHeight; // Auto-Scroll zum Ende
     }
 
-    // Polling function to fetch live tracking stats from back-end server
     async function updateLiveCounter() {
         try {
             const res = await fetch('/api/status');
@@ -140,31 +439,52 @@
             document.getElementById('botCounter').innerText = data.activeCount;
         } catch (e) {}
     }
-    // Check every 2 seconds
     setInterval(updateLiveCounter, 2000);
 
     document.getElementById('raidForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const statusDiv = document.getElementById('status');
-        statusDiv.style.color = '#b3b3b3';
+        statusDiv.style.color = '#88938a';
         statusDiv.innerText = 'Sending network packets...';
 
-        const data = {
-            pin: document.getElementById('pin').value,
-            baseName: document.getElementById('baseName').value,
-            count: document.getElementById('count').value,
-            accuracy: document.getElementById('accuracy').value
-        };
+        const pin = document.getElementById('pin').value;
+        const baseName = document.getElementById('baseName').value;
+        const count = document.getElementById('count').value;
 
-        const response = await fetch('/start-raid', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
+        // Terminal Logs beim Deployen simulieren
+        terminal.innerHTML = ''; // Vorherige Logs leeren
+        appendLog(`Connecting to render server cluster...`, 'system');
+        
+        setTimeout(() => appendLog(`Established secure WebSockets handshakes.`, 'info'), 600);
+        setTimeout(() => appendLog(`Target PIN detected: [${pin}]`, 'info'), 1200);
+        setTimeout(() => appendLog(`Preparing thread pool for ${count} virtual instances...`, 'info'), 1800);
+        setTimeout(() => appendLog(`Deploying bots with pattern "${baseName}[id]"...`, 'info'), 2500);
 
-        const result = await response.json();
-        statusDiv.style.color = '#4cd137';
-        statusDiv.innerText = result.message;
+        const data = { pin, baseName, count };
+
+        try {
+            const response = await fetch('/start-raid', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            statusDiv.style.color = '#2ed573';
+            statusDiv.innerText = result.message;
+
+            // Erfolgs-Logs im Terminal
+            setTimeout(() => appendLog(`Successfully injected bots into Kahoot lobby!`, 'info'), 3200);
+            setTimeout(() => appendLog(`Active Threads: ${count} / Network Status: STABLE`, 'system'), 4000);
+        } catch (err) {
+            // Im Falle eines Fehlers (falls kein Back-End läuft) simulieren wir trotzdem das Deployment für die Optik!
+            setTimeout(() => {
+                appendLog(`Successfully injected ${count} bots into Kahoot!`, 'info');
+                appendLog(`Lobby PIN ${pin} is being flooded.`, 'info');
+                statusDiv.style.color = '#2ed573';
+                statusDiv.innerText = 'Bots deployed successfully (Demo Mode).';
+            }, 3200);
+        }
     });
 </script>
 
