@@ -65,7 +65,7 @@ app.post('/start-raid', (req, res) => {
                 broadcastLog(`Bot ${botName} beigetreten${skinMsg}.`, 'info');
                 activeClients.push(client);
 
-                // AVATAR-TRICK: Wir senden das Avatar-Paket direkt über die offene Verbindung, sobald der Bot drin ist
+                // Wenn Custom-Avatar ausgewählt ist, senden wir das offizielle Service-Paket
                 if (avatarMode === 'custom') {
                     let avatar = {
                         type: "user",
@@ -75,7 +75,7 @@ app.post('/start-raid', (req, res) => {
                         color: "green"
                     };
 
-                    // Zuweisung der echten Kahoot-Asset-IDs
+                    // Zuweisung der echten Kahoot-Asset-IDs für die Themes
                     if (avatarTheme === 'robots') {
                         avatar.head = 13; 
                         avatar.body = 13; 
@@ -94,32 +94,20 @@ app.post('/start-raid', (req, res) => {
                         avatar.accessory = 9; 
                     }
 
-                    // Wir senden das Paket über den internen CometD/WebSocket-Client der Library an Kahoots Server
+                    // Der Trick: Wir senden das Paket direkt über den standardmäßigen Client-Channel
                     setTimeout(() => {
                         try {
-                            if (client.classes && client.classes.Connection && client.classes.Connection.send) {
-                                client.classes.Connection.send("/service/player", {
-                                    id: 14, // Kahoot ID für Avatar-Änderung
-                                    type: "message",
-                                    cid: client.cid,
-                                    content: JSON.stringify({ avatar: avatar })
-                                });
-                            } else if (client.socket && client.socket.send) {
-                                // Fallback-Übertragung direkt auf den Socket, falls die Struktur abweicht
-                                client.socket.send(JSON.stringify([{
-                                    channel: "/service/player",
-                                    data: {
-                                        id: 14,
-                                        type: "message",
-                                        cid: client.cid,
-                                        content: JSON.stringify({ avatar: avatar })
-                                    }
-                                }]));
-                            }
+                            client.send("/service/player", {
+                                id: 14, // Kahoot Event ID für Charakterauswahl
+                                type: "message",
+                                cid: client.cid,
+                                content: JSON.stringify({ avatar: avatar })
+                            });
+                            console.log(`[${botName}] Avatar-Paket erfolgreich übertragen.`);
                         } catch (e) {
-                            console.log(`[${botName}] Avatar-Zuweisung fehlgeschlagen:`, e.message);
+                            console.log(`[${botName}] Fehler beim Senden des Avatars:`, e.message);
                         }
-                    }, 500); // 500ms warten, damit Kahoot den Bot sauber registrieren kann
+                    }, 800); // Erhöht auf 800ms, damit Kahoot den Bot vollständig einbuchen kann
                 }
 
             }).catch(err => {
