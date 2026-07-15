@@ -59,48 +59,69 @@ app.post('/start-raid', (req, res) => {
             const client = new Kahoot();
             const botName = `${baseName}_${i}`;
             
-            // Kahoot benötigt ein exaktes "avatar"-Objekt mit spezifischen IDs für Kopf, Körper und Accessoires
-            let avatarData = undefined;
-            if (avatarMode === 'custom') {
-                avatarData = {
-                    avatar: {
-                        type: "user", // Sagt Kahoot, dass es ein ausgewählter Charakter ist
-                        // Die IDs müssen exakt zu Kahoots Asset-Datenbank passen:
-                        head: 1, 
-                        body: 1,
-                        accessory: 0,
-                        color: "green"
-                    }
-                };
-
-                // Zuweisung der exakten Kahoot-Asset-IDs für deine Themes
-                if (avatarTheme === 'robots') {
-                    avatarData.avatar.head = 13; // Roboter-Kopf-ID
-                    avatarData.avatar.body = 13; // Roboter-Körper-ID
-                    avatarData.avatar.accessory = 4; // z.B. Antenne
-                } else if (avatarTheme === 'monsters') {
-                    avatarData.avatar.head = 8; // Alien/Monster-Kopf-ID
-                    avatarData.avatar.body = 8;
-                    avatarData.avatar.accessory = 3; 
-                } else if (avatarTheme === 'astronauts') {
-                    avatarData.avatar.head = 5; // Astronauten-Helm
-                    avatarData.avatar.body = 5;
-                    avatarData.avatar.accessory = 1;
-                } else if (avatarTheme === 'party') {
-                    avatarData.avatar.head = 10; // Party-Kopf (z.B. Katze mit Brille)
-                    avatarData.avatar.body = 10;
-                    avatarData.avatar.accessory = 9; // Party-Hut
-                }
-            }
-
-            // WICHTIG: Die Library erwartet die Avatar-Metadaten verpackt in einem "options"-Objekt!
-            const joinOptions = avatarData ? avatarData : {};
-
-            client.join(pin, botName, joinOptions).then(() => {
+            client.join(pin, botName).then(() => {
                 console.log(`[${botName}] SUCCESS: In lobby`);
                 const skinMsg = avatarMode === 'custom' ? ` mit Style [${avatarTheme}]` : '';
                 broadcastLog(`Bot ${botName} beigetreten${skinMsg}.`, 'info');
                 activeClients.push(client);
+
+                // AVATAR-TRICK: Wir senden das Avatar-Paket direkt über die offene Verbindung, sobald der Bot drin ist
+                if (avatarMode === 'custom') {
+                    let avatar = {
+                        type: "user",
+                        head: 1,
+                        body: 1,
+                        accessory: 0,
+                        color: "green"
+                    };
+
+                    // Zuweisung der echten Kahoot-Asset-IDs
+                    if (avatarTheme === 'robots') {
+                        avatar.head = 13; 
+                        avatar.body = 13; 
+                        avatar.accessory = 4; 
+                    } else if (avatarTheme === 'monsters') {
+                        avatar.head = 8; 
+                        avatar.body = 8;
+                        avatar.accessory = 3; 
+                    } else if (avatarTheme === 'astronauts') {
+                        avatar.head = 5; 
+                        avatar.body = 5;
+                        avatar.accessory = 1;
+                    } else if (avatarTheme === 'party') {
+                        avatar.head = 10; 
+                        avatar.body = 10;
+                        avatar.accessory = 9; 
+                    }
+
+                    // Wir senden das Paket über den internen CometD/WebSocket-Client der Library an Kahoots Server
+                    setTimeout(() => {
+                        try {
+                            if (client.classes && client.classes.Connection && client.classes.Connection.send) {
+                                client.classes.Connection.send("/service/player", {
+                                    id: 14, // Kahoot ID für Avatar-Änderung
+                                    type: "message",
+                                    cid: client.cid,
+                                    content: JSON.stringify({ avatar: avatar })
+                                });
+                            } else if (client.socket && client.socket.send) {
+                                // Fallback-Übertragung direkt auf den Socket, falls die Struktur abweicht
+                                client.socket.send(JSON.stringify([{
+                                    channel: "/service/player",
+                                    data: {
+                                        id: 14,
+                                        type: "message",
+                                        cid: client.cid,
+                                        content: JSON.stringify({ avatar: avatar })
+                                    }
+                                }]));
+                            }
+                        } catch (e) {
+                            console.log(`[${botName}] Avatar-Zuweisung fehlgeschlagen:`, e.message);
+                        }
+                    }, 500); // 500ms warten, damit Kahoot den Bot sauber registrieren kann
+                }
+
             }).catch(err => {
                 const errMsg = err.description || err;
                 console.log(`[${botName}] Join Error:`, errMsg);
