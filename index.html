@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SocketRaid - Kahoot Spammer</title>
-    <!-- Google Fonts: Plus Jakarta Sans (für modernste UI) und Merriweather (die klassische Buch-Schriftart) -->
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         html {
@@ -202,7 +201,7 @@
             letter-spacing: 0.8px;
         }
 
-        input {
+        input, select {
             width: 100%;
             padding: 12px 16px;
             margin-bottom: 20px;
@@ -214,13 +213,40 @@
             box-sizing: border-box;
             transition: all 0.2s ease-in-out;
             font-family: inherit;
+            outline: none;
         }
 
-        input:focus {
+        input:focus, select:focus {
             border-color: #2ed573;
             background-color: rgba(5, 8, 6, 0.8);
             box-shadow: 0 0 10px rgba(46, 213, 115, 0.2);
-            outline: none;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2388938a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        /* Container für Custom-Avatar Dropdown */
+        #customAvatarContainer {
+            margin-bottom: 20px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Leuchtender grüner Button */
@@ -261,7 +287,7 @@
             text-shadow: 0 0 5px rgba(46, 213, 115, 0.2);
         }
 
-        /* FAKE MACOS TERMINAL (CMD FENSTER) */
+        /* FAKE MACOS TERMINAL */
         .terminal-window {
             margin-top: 25px;
             background: #020403;
@@ -275,7 +301,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Terminal Header (macOS Knöpfe) */
         .terminal-header {
             background: #111512;
             padding: 10px 14px;
@@ -305,10 +330,9 @@
             color: #616e64;
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-weight: 600;
-            margin-right: 25px; /* Ausgleich für linksbündige Knöpfe */
+            margin-right: 25px;
         }
 
-        /* Terminal Logs */
         .terminal-body {
             padding: 12px;
             font-family: 'Fira Code', 'Courier New', Courier, monospace;
@@ -321,7 +345,6 @@
             scroll-behavior: smooth;
         }
 
-        /* Scrollbar für Terminal stylen */
         .terminal-body::-webkit-scrollbar {
             width: 4px;
         }
@@ -352,10 +375,8 @@
 </head>
 <body>
 
-<!-- LOGO LINKS OBEN IN DER ECKE -->
 <div class="header-logo">
     <div class="logo-icon">
-        <!-- Minimalistisches SVG Blitz-Icon -->
         <svg viewBox="0 0 24 24">
             <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
         </svg>
@@ -363,21 +384,18 @@
     <span class="logo-text">SocketRaid</span>
 </div>
 
-<!-- 1. HERO BEREICH -->
 <div class="hero-section">
     <h1 class="hero-title">
         <span class="title-socket">Socket</span><span class="title-raid">Raid</span>
     </h1>
     <p class="hero-subtitle">The #1 Kahoot Spammer</p>
     
-    <!-- Eleganter Pfeil in Buch-Schriftart -->
     <a href="#panel" class="scroll-down">
         <span class="scroll-text">zum Panel</span>
         <span class="scroll-arrow">▼</span>
     </a>
 </div>
 
-<!-- 2. PANEL BEREICH (Nach dem Scrollen) -->
 <div class="panel-section" id="panel">
     <div class="container">
         <h2 class="panel-title">Raid Controller</h2>
@@ -393,11 +411,26 @@
             <label for="count">Bot Count</label>
             <input type="number" id="count" name="count" required min="1" max="100" placeholder="e.g. 30">
 
+            <label for="avatarMode">Bot Avatare</label>
+            <select id="avatarMode" name="avatarMode">
+                <option value="random">Zufällig (Kahoot Standard)</option>
+                <option value="custom">Eigener Style (Custom-Skins)</option>
+            </select>
+
+            <div id="customAvatarContainer" style="display: none;">
+                <label for="avatarTheme">Skin Theme</label>
+                <select id="avatarTheme" name="avatarTheme">
+                    <option value="robots">Cyber-Roboter 🤖</option>
+                    <option value="monsters">Space-Monster 👾</option>
+                    <option value="astronauts">Astro-Cats & Dogs 🧑‍🚀</option>
+                    <option value="party">Party-Hard 🎉</option>
+                </select>
+            </div>
+
             <button type="submit">Deploy Bots Instantly</button>
         </form>
         <div id="status"></div>
 
-        <!-- FAKE MACOS TERMINAL -->
         <div class="terminal-window">
             <div class="terminal-header">
                 <div class="terminal-buttons">
@@ -408,7 +441,7 @@
                 <div class="terminal-title">bash — render-server-01 — 80×24</div>
             </div>
             <div class="terminal-body" id="terminalLogs">
-                <div class="log-entry"><span class="log-time">[14:28:01]</span> <span class="log-info">[system]</span> SocketRaid daemon initialized. Ready for command...</div>
+                <div class="log-entry"><span class="log-time">[00:00:00]</span> <span class="log-time">[system]</span> Warte auf Startbefehl...</div>
             </div>
         </div>
     </div>
@@ -416,22 +449,54 @@
 
 <script>
     const terminal = document.getElementById('terminalLogs');
+    const avatarModeSelect = document.getElementById('avatarMode');
+    const customAvatarContainer = document.getElementById('customAvatarContainer');
 
-    // Funktion um Logs im macOS-Fenster hinzuzufügen
-    function appendLog(text, type = 'info') {
+    // Dropdown-Menü sanft ein- und ausblenden
+    avatarModeSelect.addEventListener('change', function() {
+        if (this.value === 'custom') {
+            customAvatarContainer.style.display = 'block';
+        } else {
+            customAvatarContainer.style.display = 'none';
+        }
+    });
+
+    // Neue Log-Zeilen im Terminal generieren
+    function appendLog(rawText) {
         const time = new Date().toTimeString().split(' ')[0];
         const logEntry = document.createElement('div');
         logEntry.className = 'log-entry';
         
         let prefix = `<span class="log-info">[info]</span>`;
-        if (type === 'warn') prefix = `<span class="log-warn">[warn]</span>`;
-        if (type === 'system') prefix = `<span class="log-time">[system]</span>`;
+        let text = rawText;
+
+        if (rawText.startsWith('[system]')) {
+            prefix = `<span class="log-time">[system]</span>`;
+            text = rawText.replace('[system] ', '');
+        } else if (rawText.startsWith('[error]')) {
+            prefix = `<span class="log-warn">[error]</span>`;
+            text = rawText.replace('[error] ', '');
+        } else if (rawText.startsWith('[info]')) {
+            prefix = `<span class="log-info">[info]</span>`;
+            text = rawText.replace('[info] ', '');
+        }
 
         logEntry.innerHTML = `<span class="log-time">[${time}]</span> ${prefix} ${text}`;
         terminal.appendChild(logEntry);
-        terminal.scrollTop = terminal.scrollHeight; // Auto-Scroll zum Ende
+        terminal.scrollTop = terminal.scrollHeight; // Autoscroll ganz nach unten
     }
 
+    // Live-Verbindung zum Log-Stream deines Servers
+    const eventSource = new EventSource('/api/log-stream');
+    eventSource.onmessage = function(event) {
+        appendLog(event.data);
+    };
+
+    eventSource.onerror = function() {
+        console.log("Verbindung zum Log-Stream verloren. Versuche erneut...");
+    };
+
+    // Live Online-Bot-Zähler updaten
     async function updateLiveCounter() {
         try {
             const res = await fetch('/api/status');
@@ -441,26 +506,23 @@
     }
     setInterval(updateLiveCounter, 2000);
 
+    // Formular-Submission abschicken
     document.getElementById('raidForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const statusDiv = document.getElementById('status');
         statusDiv.style.color = '#88938a';
-        statusDiv.innerText = 'Sending network packets...';
+        statusDiv.innerText = 'Sende API-Anfrage an Render...';
 
         const pin = document.getElementById('pin').value;
         const baseName = document.getElementById('baseName').value;
         const count = document.getElementById('count').value;
+        const avatarMode = document.getElementById('avatarMode').value;
+        const avatarTheme = document.getElementById('avatarTheme').value;
 
-        // Terminal Logs beim Deployen simulieren
-        terminal.innerHTML = ''; // Vorherige Logs leeren
-        appendLog(`Connecting to render server cluster...`, 'system');
-        
-        setTimeout(() => appendLog(`Established secure WebSockets handshakes.`, 'info'), 600);
-        setTimeout(() => appendLog(`Target PIN detected: [${pin}]`, 'info'), 1200);
-        setTimeout(() => appendLog(`Preparing thread pool for ${count} virtual instances...`, 'info'), 1800);
-        setTimeout(() => appendLog(`Deploying bots with pattern "${baseName}[id]"...`, 'info'), 2500);
+        terminal.innerHTML = ''; 
+        appendLog('[system] Signal an Render-Server gesendet...');
 
-        const data = { pin, baseName, count };
+        const data = { pin, baseName, count, avatarMode, avatarTheme };
 
         try {
             const response = await fetch('/start-raid', {
@@ -472,18 +534,10 @@
             const result = await response.json();
             statusDiv.style.color = '#2ed573';
             statusDiv.innerText = result.message;
-
-            // Erfolgs-Logs im Terminal
-            setTimeout(() => appendLog(`Successfully injected bots into Kahoot lobby!`, 'info'), 3200);
-            setTimeout(() => appendLog(`Active Threads: ${count} / Network Status: STABLE`, 'system'), 4000);
         } catch (err) {
-            // Im Falle eines Fehlers (falls kein Back-End läuft) simulieren wir trotzdem das Deployment für die Optik!
-            setTimeout(() => {
-                appendLog(`Successfully injected ${count} bots into Kahoot!`, 'info');
-                appendLog(`Lobby PIN ${pin} is being flooded.`, 'info');
-                statusDiv.style.color = '#2ed573';
-                statusDiv.innerText = 'Bots deployed successfully (Demo Mode).';
-            }, 3200);
+            statusDiv.style.color = '#ff5f56';
+            statusDiv.innerText = 'Verbindung fehlgeschlagen.';
+            appendLog('[error] Host nicht erreichbar. Bitte Server-Konsole prüfen.');
         }
     });
 </script>
