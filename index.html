@@ -449,19 +449,8 @@
 
 <script>
     const terminal = document.getElementById('terminalLogs');
-    const avatarModeSelect = document.getElementById('avatarMode');
-    const customAvatarContainer = document.getElementById('customAvatarContainer');
 
-    // Dropdown-Menü sanft ein- und ausblenden
-    avatarModeSelect.addEventListener('change', function() {
-        if (this.value === 'custom') {
-            customAvatarContainer.style.display = 'block';
-        } else {
-            customAvatarContainer.style.display = 'none';
-        }
-    });
-
-    // Neue Log-Zeilen im Terminal generieren
+    // Neue Log-Zeilen im Terminal generieren (Ohne Duplikate!)
     function appendLog(rawText) {
         const time = new Date().toTimeString().split(' ')[0];
         const logEntry = document.createElement('div');
@@ -496,7 +485,7 @@
         console.log("Verbindung zum Log-Stream verloren. Versuche erneut...");
     };
 
-    // Live Online-Bot-Zähler updaten
+    // Live Online-Bot-Zähler updaten (einmal alle 2 Sek.)
     async function updateLiveCounter() {
         try {
             const res = await fetch('/api/status');
@@ -506,7 +495,7 @@
     }
     setInterval(updateLiveCounter, 2000);
 
-    // Formular-Submission abschicken
+    // Formular absenden (Nur eine, saubere Funktion)
     document.getElementById('raidForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const statusDiv = document.getElementById('status');
@@ -516,13 +505,11 @@
         const pin = document.getElementById('pin').value;
         const baseName = document.getElementById('baseName').value;
         const count = document.getElementById('count').value;
-        const avatarMode = document.getElementById('avatarMode').value;
-        const avatarTheme = document.getElementById('avatarTheme').value;
 
         terminal.innerHTML = ''; 
         appendLog('[system] Signal an Render-Server gesendet...');
 
-        const data = { pin, baseName, count, avatarMode, avatarTheme };
+        const data = { pin, baseName, count };
 
         try {
             const response = await fetch('/start-raid', {
@@ -541,6 +528,5 @@
         }
     });
 </script>
-
 </body>
 </html>
