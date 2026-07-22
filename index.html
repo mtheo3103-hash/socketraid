@@ -410,25 +410,9 @@
             <input type="text" id="baseName" name="baseName" required placeholder="e.g. hack">
 
             <label for="count">Bot Count</label>
-            <input type="number" id="count" name="count" required min="1" max="100" placeholder="e.g. 30">
+            <input type="number" id="count" name="count" required min="1" max="999" placeholder="e.g. 30">
 
-            <label for="avatarMode">Bot Avatare</label>
-            <select id="avatarMode" name="avatarMode">
-                <option value="random">Zufällig (Kahoot Standard)</option>
-                <option value="custom">Eigener Style (Custom-Skins)</option>
-            </select>
-
-            <div id="customAvatarContainer" style="display: none;">
-                <label for="avatarTheme">Skin Theme</label>
-                <select id="avatarTheme" name="avatarTheme">
-                    <option value="robots">Cyber-Roboter 🤖</option>
-                    <option value="monsters">Space-Monster 👾</option>
-                    <option value="astronauts">Astro-Cats & Dogs 🧑‍🚀</option>
-                    <option value="party">Party-Hard 🎉</option>
-                </select>
-            </div>
-
-            <button type="submit">Deploy Bots Instantly</button>
+            <button type="submit">Deploy Bots</button>
         </form>
         <div id="status"></div>
 
